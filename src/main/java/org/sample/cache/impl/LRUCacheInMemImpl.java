@@ -16,75 +16,106 @@ public class LRUCacheInMemImpl implements LRUCache {
         nodeMap = new HashMap<>(memory);
     }
 
+
     @Override
     public void put(String key, Integer value) {
-        Node node = this.getNode(key);
-        if (node != null) {
-            node.setValue(value);
-            return;
+        if (this.nodeMap.size() == this.getSize()) {
+            this.evict();
         }
-        if (nodeMap.size() == memory) {
-            evict();
-        }
-        node = new Node(key, value);
-        putNode(node);
-        nodeMap.put(key, node);
-    }
-
-    private Node putNode(Node node) {
-        if (head == null) {
-            tail = node;
+        Node node = this.nodeMap.get(key);
+        if (node == null) {
+            node = new Node(key, value);
+            this.nodeMap.put(node.getKey(), node);
+            pushNodeToHead(node, true);
         } else {
-            head.setPrevious(node);
-            node.setNext(head);
+            node.setValue(value);
+            pushNodeToHead(node, false);
         }
-        head = node;
-        return head;
     }
 
     @Override
     public Integer remove(String key) {
-        Node node = getNode(key);
+        Node node = this.getNode(key);
         if (node == null) {
-            return 0;
+            return Integer.MIN_VALUE;
         }
-        this.nodeMap.remove(node.getKey(), node);
-        if (this.tail == node || this.head == node) {
-            return this.adjustEdges(node);
-        }
-        node.getPrevious().setNext(node.getNext());
-        node.getNext().setPrevious(node.getPrevious());
-        return node.getValue();
-    }
-
-    private Integer adjustEdges(Node node) {
-        if (tail == node && tail == head) {
-            head = null;
-            tail = null;
-            return node.getValue();
-        }
-        if (tail == node) {
-            tail = node.getPrevious();
-            tail.setNext(null);
-        } else {
-            head = node.getNext();
-            head.setPrevious(null);
-        }
+        removeNode(node);
         return node.getValue();
     }
 
     @Override
     public Integer get(String key) {
-        Node node = getNode(key);
+        Node node = this.getNode(key);
         if (node == null) {
-            return null;
+            return Integer.MIN_VALUE;
         }
-        if (node == head) {
-            return node.getValue();
+        pushNodeToHead(node, false);
+        return node.getValue();
+    }
+
+    @Override
+    public Integer getSize() {
+        return this.memory;
+    }
+
+    @Override
+    public void printCurrentState() {
+        if (head == null) {
+            System.out.println("No element in cache");
+        }
+        Node temp = head;
+        while (temp != null) {
+            System.out.print(temp.getValue() + ", ");
+            temp = temp.getNext();
+        }
+        System.out.println();
+    }
+
+    private void removeNode(Node node) {
+        if (this.getNode(node.getKey()) == null) {
+            return;
+        }
+        if (this.head == node && this.tail == node) {
+            this.head = null;
+            this.tail = null;
         } else if (node == tail) {
-            node.getPrevious().setNext(null);
-            tail = node.getPrevious();
+            this.evict();
+        } else if (node == head) {
+            head.getNext().setPrevious(null);
+            head = head.getNext();
         } else {
+            node.getPrevious().setNext(node.getNext());
+            node.getNext().setPrevious(node.getPrevious());
+        }
+        node.setPrevious(null);
+        node.setNext(null);
+        this.nodeMap.remove(node.getKey());
+    }
+
+    private void evict() {
+        if (this.nodeMap.size() < this.getSize()) {
+            return;
+        }
+        if (tail == null) {
+            throw new RuntimeException("Eviction called on null tail");
+        }
+        this.nodeMap.remove(tail.getKey());
+        tail.getPrevious().setNext(null);
+        tail = tail.getPrevious();
+    }
+
+    private void pushNodeToHead(Node node, boolean newNode) {
+        if (node == head) {
+            return;
+        }
+        if (head == null) {
+            head = node;
+            tail = node;
+            return;
+        }
+        if (!newNode && node == tail) {
+            node.getPrevious().setNext(null);
+        } else if (!newNode) {
             node.getPrevious().setNext(node.getNext());
             node.getNext().setPrevious(node.getPrevious());
         }
@@ -92,33 +123,9 @@ public class LRUCacheInMemImpl implements LRUCache {
         node.setNext(head);
         head.setPrevious(node);
         head = node;
-        return node.getValue();
-    }
-
-    @Override
-    public Integer getSize() {
-        return this.nodeMap.size();
-    }
-
-    @Override
-    public void printCurrentState() {
-        Node point = head;
-        System.out.print("Current state = ");
-        while (point != null) {
-            System.out.print("-"+point.getKey());
-            point = point.getNext();
-        }
-        System.out.println();
     }
 
     private Node getNode(String key) {
         return this.nodeMap.get(key);
-    }
-
-    private void evict() {
-        String key = tail.getKey();
-        nodeMap.remove(key, tail);
-        tail.getPrevious().setNext(null);
-        tail = tail.getPrevious();
     }
 }
