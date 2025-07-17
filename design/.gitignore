@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+**/.idea
+**/.mvn
+**/.gitattributes
+**/node_modules
+**/target
+**/src/main/**/target
+**/src/test/**/target
