@@ -2,3 +2,6 @@
 **/.DS_Store
 **/.gitattributes
 **/.mvn/
+**/target/
+/dsa/target/
+dsa/target/

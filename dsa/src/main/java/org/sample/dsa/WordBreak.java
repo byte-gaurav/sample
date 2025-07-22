@@ -40,7 +40,7 @@ public class WordBreak {
 
     public boolean wordBreak(String s, List<String> wordDict) {
 
-        return isWordBreaking(s,0, new HashSet<>(wordDict), new Boolean[s.length()]);
+        return isWordBreakingSort(s,wordDict);
     }
 
     private boolean isWordBreaking(String s, int i, Set<String> wordDictionary, Boolean[] memo) {
