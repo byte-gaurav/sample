@@ -9,7 +9,7 @@ public class LRUCacheInMemImpl implements LRUCache {
     private final int memory;
     private Node head;
     private Node tail;
-    private final HashMap<String, Node> nodeMap;
+    private final HashMap<Integer, Node> nodeMap;
 
     public LRUCacheInMemImpl(int memory) {
         this.memory = memory;
@@ -18,7 +18,7 @@ public class LRUCacheInMemImpl implements LRUCache {
 
 
     @Override
-    public void put(String key, Integer value) {
+    public void put(int key, int value) {
         if (this.nodeMap.size() == this.getSize()) {
             this.evict();
         }
@@ -34,7 +34,7 @@ public class LRUCacheInMemImpl implements LRUCache {
     }
 
     @Override
-    public Integer remove(String key) {
+    public Integer remove(int key) {
         Node node = this.getNode(key);
         if (node == null) {
             return Integer.MIN_VALUE;
@@ -44,7 +44,7 @@ public class LRUCacheInMemImpl implements LRUCache {
     }
 
     @Override
-    public Integer get(String key) {
+    public Integer get(int key) {
         Node node = this.getNode(key);
         if (node == null) {
             return Integer.MIN_VALUE;
@@ -125,7 +125,7 @@ public class LRUCacheInMemImpl implements LRUCache {
         head = node;
     }
 
-    private Node getNode(String key) {
+    private Node getNode(int key) {
         return this.nodeMap.get(key);
     }
 }

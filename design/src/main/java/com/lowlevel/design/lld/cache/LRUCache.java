@@ -1,10 +1,10 @@
 package org.sample.lld.cache;
 
 public interface LRUCache {
-    void put(String key, Integer value);
-    Integer remove(String key);
+    void put(int key, int value);
+    Integer remove(int key);
 
-    Integer get(String key);
+    Integer get(int key);
 
     Integer getSize();
 

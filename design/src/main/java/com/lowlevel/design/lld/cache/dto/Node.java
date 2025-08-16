@@ -2,7 +2,7 @@ package org.sample.lld.cache.dto;
 
 public class Node {
 
-    private String key;
+    private int key;
 
     private int value;
 
@@ -12,7 +12,7 @@ public class Node {
 
     private Node() { }
 
-    public Node(String key, int value) {
+    public Node(int key, int value) {
         this.key = key;
         this.value = value;
     }
@@ -28,11 +28,11 @@ public class Node {
         return (obj.key+"_"+obj.value).equals(this.key+"_"+this.value);
     }
 
-    public String getKey() {
+    public int getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(int key) {
         this.key = key;
     }
 

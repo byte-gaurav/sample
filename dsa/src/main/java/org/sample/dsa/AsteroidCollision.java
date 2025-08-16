@@ -8,8 +8,6 @@ public class AsteroidCollision {
 
     public static void main(String[] args) {
         AsteroidCollision ac = new AsteroidCollision();
-//        int[] asteroids = {5,10,-5};
-//        int[] asteroids = {-2,-2,1,-2};
         int[] asteroids = {5,-5};
         System.out.println();
         for (int i :  ac.asteroidCollision(asteroids)) {
